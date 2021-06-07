@@ -7,27 +7,39 @@ class BytebankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: FormularioTransferencia(),
+        body: ListaTranferencias(),
       ),
     );
   }
 }
 
 class ListaTranferencias extends StatelessWidget {
+
+  final List<Transferencia> _transferencias = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          ItemTranferencia(Transferencia(100.00, 2000)),
-        ],
+      body: ListView.builder(
+        itemCount: _transferencias.length,
+        itemBuilder: (context, index) {
+          return ItemTranferencia(_transferencias[index])
+        },
       ),
       appBar: AppBar(
         title: Text('Transferências'),
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () {
+          final Future future =
+              Navigator.push(context, MaterialPageRoute(builder: (context) {
+            return FormularioTransferencia();
+          }));
+          future.then((transferenciaRecebida) {
+            _transferencias.add(transferenciaRecebida);
+          });
+        },
       ),
     );
   }
@@ -58,10 +70,8 @@ class Transferencia {
 }
 
 class FormularioTransferencia extends StatelessWidget {
-
   final TextEditingController _controladorCampoConta = TextEditingController();
   final TextEditingController _controladorCampoValor = TextEditingController();
-
 
   @override
   Widget build(BuildContext context) {
@@ -71,47 +81,60 @@ class FormularioTransferencia extends StatelessWidget {
         ),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _controladorCampoConta,
-                    style: TextStyle(fontSize: 24.0),
-                    decoration: InputDecoration(
-                        labelText: "Número da conta", hintText: "0000"),
-                    keyboardType: TextInputType.number,
-                  ),
-                  //ElevatedButton()
-                ],
-              ),
+            Editor(
+              controlador: _controladorCampoConta,
+              rotulo: "Número da conta",
+              dica: "0000",
             ),
-            Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(
-                children: [
-                  TextField(
-                    controller: _controladorCampoValor,
-                    style: TextStyle(fontSize: 24.0),
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.monetization_on),
-                        labelText: "Valor", hintText: "0.00"),
-                    keyboardType: TextInputType.number,
-                  ),
-                  //ElevatedButton()
-                ],
-              ),
+            Editor(
+              controlador: _controladorCampoValor,
+              rotulo: "Valor",
+              dica: "0.00",
+              icon: Icons.monetization_on,
             ),
-            ElevatedButton(onPressed: () {
-              debugPrint('clicou no confirmar');
-              final numeroConta = int.tryParse(_controladorCampoConta.text);
-              final valor = double.tryParse(_controladorCampoValor.text);
-              if(numeroConta != null && valor != null){
-                final transferenciaCriada = Transferencia(valor, numeroConta);
-              }
-
-            }, child: Text("Confirmar"))
+            ElevatedButton(
+                onPressed: () => _criaTransferencia(context),
+                child: Text("Confirmar"))
           ],
         ));
+  }
+
+  void _criaTransferencia(BuildContext context) {
+    final numeroConta = int.tryParse(_controladorCampoConta.text);
+    final valor = double.tryParse(_controladorCampoValor.text);
+    if (numeroConta != null && valor != null) {
+      final transferenciaCriada = Transferencia(valor, numeroConta);
+      Navigator.pop(context, transferenciaCriada);
+    }
+  }
+}
+
+class Editor extends StatelessWidget {
+  final controlador;
+  final rotulo;
+  final dica;
+  final icon;
+
+  Editor({this.controlador, this.rotulo, this.dica, this.icon});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(15.0),
+      child: Column(
+        children: [
+          TextField(
+            controller: controlador,
+            style: TextStyle(fontSize: 24.0),
+            decoration: InputDecoration(
+                icon: icon != null ? Icon(icon) : null,
+                labelText: rotulo,
+                hintText: dica),
+            keyboardType: TextInputType.number,
+          ),
+          //ElevatedButton()
+        ],
+      ),
+    );
   }
 }
