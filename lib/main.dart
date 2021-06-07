@@ -14,7 +14,6 @@ class BytebankApp extends StatelessWidget {
 }
 
 class ListaTranferencias extends StatelessWidget {
-
   final List<Transferencia> _transferencias = [];
 
   @override
@@ -23,7 +22,7 @@ class ListaTranferencias extends StatelessWidget {
       body: ListView.builder(
         itemCount: _transferencias.length,
         itemBuilder: (context, index) {
-          return ItemTranferencia(_transferencias[index])
+          return ItemTranferencia(_transferencias[index]);
         },
       ),
       appBar: AppBar(
