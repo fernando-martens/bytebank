@@ -7,13 +7,13 @@ class BytebankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: ListaTranferencias(),
+        body: ListaTransferencias(),
       ),
     );
   }
 }
 
-class ListaTranferencias extends StatelessWidget {
+class ListaTransferencias extends StatelessWidget {
   final List<Transferencia> _transferencias = [];
 
   @override
