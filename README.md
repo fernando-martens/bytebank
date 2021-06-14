@@ -1,4 +1,4 @@
-# bytebank
+# bytebank-flutter
 
 Aplicativo construido no curso Fundamentos de Flutter da alura que registra transferências em uma lista. 
 
